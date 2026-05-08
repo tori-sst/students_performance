@@ -1,0 +1,78 @@
+[2026-05-08 06:58:51] === updateStudentCell CALLED ===
+[2026-05-08 06:58:51] ID: 10012
+[2026-05-08 06:58:51] Column: год рождения
+[2026-05-08 06:58:51] Value: 2004
+[2026-05-08 06:58:51] ERROR: Column not allowed - год рождения
+[2026-05-08 07:03:49] === updateStudentCell CALLED ===
+[2026-05-08 07:03:49] ID: 10012
+[2026-05-08 07:03:49] Column: год рождения
+[2026-05-08 07:03:49] Value: 2004
+[2026-05-08 07:03:49] ERROR: Column not allowed - год рождения
+[2026-05-08 07:13:33] === updateStudentCell CALLED ===
+[2026-05-08 07:13:33] ID: 10000
+[2026-05-08 07:13:33] Column: gender
+[2026-05-08 07:13:33] Value: Мужской
+[2026-05-08 07:13:33] SQL: UPDATE students SET `gender` = :value WHERE `stud_id` = :id
+[2026-05-08 07:13:33] SUCCESS! Rows affected: 0
+[2026-05-08 07:13:34] === updateStudentCell CALLED ===
+[2026-05-08 07:13:34] ID: 10000
+[2026-05-08 07:13:34] Column: gender
+[2026-05-08 07:13:34] Value: Мужской
+[2026-05-08 07:13:34] SQL: UPDATE students SET `gender` = :value WHERE `stud_id` = :id
+[2026-05-08 07:13:34] SUCCESS! Rows affected: 0
+[2026-05-08 07:13:40] === updateStudentCell CALLED ===
+[2026-05-08 07:13:40] ID: 10000
+[2026-05-08 07:13:40] Column: full_name
+[2026-05-08 07:13:40] Value: Тестовый
+[2026-05-08 07:13:40] SQL: UPDATE students SET `full_name` = :value WHERE `stud_id` = :id
+[2026-05-08 07:13:40] SUCCESS! Rows affected: 1
+[2026-05-08 07:13:46] === updateStudentCell CALLED ===
+[2026-05-08 07:13:46] ID: 10003
+[2026-05-08 07:13:46] Column: full_name
+[2026-05-08 07:13:46] Value: Смирнов Михаил Петрович
+[2026-05-08 07:13:46] SQL: UPDATE students SET `full_name` = :value WHERE `stud_id` = :id
+[2026-05-08 07:13:46] SUCCESS! Rows affected: 0
+[2026-05-08 07:14:00] === updateStudentCell CALLED ===
+[2026-05-08 07:14:00] ID: 10003
+[2026-05-08 07:14:00] Column: full_name
+[2026-05-08 07:14:00] Value: Михаилов Алексей Попович
+[2026-05-08 07:14:00] SQL: UPDATE students SET `full_name` = :value WHERE `stud_id` = :id
+[2026-05-08 07:18:01] === updateStudentCell CALLED ===
+[2026-05-08 07:18:01] ID: 10012
+[2026-05-08 07:18:01] Column: birth_date
+[2026-05-08 07:18:01] Value: 2003
+[2026-05-08 07:18:01] SQL: UPDATE students SET `birth_date` = :value WHERE `stud_id` = :id
+[2026-05-08 07:18:01] SUCCESS! Rows affected: 1
+[2026-05-08 07:19:29] === updateStudentCell CALLED ===
+[2026-05-08 07:19:29] ID: 10012
+[2026-05-08 07:19:29] Column: birth_date
+[2026-05-08 07:19:29] Value: 2006
+[2026-05-08 07:19:29] SQL: UPDATE students SET `birth_date` = :value WHERE `stud_id` = :id
+[2026-05-08 07:19:29] SUCCESS! Rows affected: 1
+[2026-05-08 07:20:05] === updateStudentCell CALLED ===
+[2026-05-08 07:20:05] ID: Минаев Роман Сергеевич
+[2026-05-08 07:20:05] Column: стипендия_(руб.)
+[2026-05-08 07:20:05] Value: 1500
+[2026-05-08 07:20:05] ERROR: Column not allowed - стипендия_(руб.)
+[2026-05-08 07:20:08] === updateStudentCell CALLED ===
+[2026-05-08 07:20:08] ID: Минаев Роман Сергеевич
+[2026-05-08 07:20:08] Column: стипендия_(руб.)
+[2026-05-08 07:20:08] Value: 
+[2026-05-08 07:20:08] ERROR: Column not allowed - стипендия_(руб.)
+[2026-05-08 07:20:20] === updateStudentCell CALLED ===
+[2026-05-08 07:20:20] ID: Минаев Роман Сергеевич
+[2026-05-08 07:20:20] Column: стипендия_(руб.)
+[2026-05-08 07:20:20] Value: 1200
+[2026-05-08 07:20:20] ERROR: Column not allowed - стипендия_(руб.)
+[2026-05-08 08:09:54] === updateStudentCell CALLED ===
+[2026-05-08 08:09:54] ID: 10012
+[2026-05-08 08:09:54] Column: stud_phone
+[2026-05-08 08:09:54] Value: +79171234578
+[2026-05-08 08:09:54] SQL: UPDATE students SET `stud_phone` = :value WHERE `stud_id` = :id
+[2026-05-08 08:09:54] SUCCESS! Rows affected: 0
+[2026-05-08 08:10:06] === updateStudentCell CALLED ===
+[2026-05-08 08:10:06] ID: 10012
+[2026-05-08 08:10:06] Column: stud_phone
+[2026-05-08 08:10:06] Value: +7917123456
+[2026-05-08 08:10:06] SQL: UPDATE students SET `stud_phone` = :value WHERE `stud_id` = :id
+[2026-05-08 08:10:06] SUCCESS! Rows affected: 1

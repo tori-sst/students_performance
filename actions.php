@@ -142,7 +142,7 @@ if (isset($_GET['success']) || isset($_GET['error'])) {
         echo "alert('✅ " . addslashes($msg) . "');";
     }
     if (isset($_GET['error'])) {
-        echo "alert('❌ Ошибка: " . addslashes($_GET['error']) . "');";
+        echo "alert('Ошибка: " . addslashes($_GET['error']) . "');";
     }
     echo "window.location.href = 'index.php?page=$page';";
     echo "</script>";
