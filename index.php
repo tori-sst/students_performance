@@ -20,18 +20,10 @@ if (isset($_GET['admin_action'])) {
             exit;
             
         case 'update_cell':
-            $data = json_decode(file_get_contents('php://input'), true);
-            $success = false;
-            
-            switch ($data['table']) {
-                case 'students': $success = updateStudentCell($pdo, $data['id'], $data['column'], $data['value']); break;
-                case 'teacher': $success = updateTeacherCell($pdo, $data['id'], $data['column'], $data['value']); break;
-                case 'groups': $success = updateGroupCell($pdo, $data['id'], $data['column'], $data['value']); break;
-                case 'departments': $success = updateDepartmentCell($pdo, $data['id'], $data['column'], $data['value']); break;
-                case 'subjects': $success = updateSubjectCell($pdo, $data['id'], $data['column'], $data['value']); break;
-            }
-            echo json_encode(['success' => $success]);
-            exit;
+        $data = json_decode(file_get_contents('php://input'), true);
+        $result = updateAnyTableCell($pdo, $data['table'], $data['id'], $data['column'], $data['value']);
+        echo json_encode($result);
+        exit;
     }
 }
 

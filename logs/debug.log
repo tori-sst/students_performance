@@ -76,3 +76,49 @@
 [2026-05-08 08:10:06] Value: +7917123456
 [2026-05-08 08:10:06] SQL: UPDATE students SET `stud_phone` = :value WHERE `stud_id` = :id
 [2026-05-08 08:10:06] SUCCESS! Rows affected: 1
+[2026-05-15 04:37:27] === updateStudentCell CALLED ===
+[2026-05-15 04:37:27] ID: 10012
+[2026-05-15 04:37:27] Column: stud_phone
+[2026-05-15 04:37:27] Value: +7917123456
+[2026-05-15 04:37:27] SQL: UPDATE students SET `stud_phone` = :value WHERE `stud_id` = :id
+[2026-05-15 04:37:27] SUCCESS! Rows affected: 0
+[2026-05-15 04:54:40] === updateStudentCell CALLED ===
+[2026-05-15 04:54:40] ID: 10012
+[2026-05-15 04:54:40] Column: full_name
+[2026-05-15 04:54:40] Value: Антонова Марина Витальевна
+[2026-05-15 04:54:40] SQL: UPDATE students SET `full_name` = :value WHERE `stud_id` = :id
+[2026-05-15 04:54:40] SUCCESS! Rows affected: 0
+[2026-05-15 04:54:44] === updateStudentCell CALLED ===
+[2026-05-15 04:54:44] ID: 10012
+[2026-05-15 04:54:44] Column: full_name
+[2026-05-15 04:54:44] Value: Антонова Марина Витальевна
+[2026-05-15 04:54:44] SQL: UPDATE students SET `full_name` = :value WHERE `stud_id` = :id
+[2026-05-15 04:54:44] SUCCESS! Rows affected: 0
+[2026-05-15 06:11:34] === updateStudentCell CALLED ===
+[2026-05-15 06:11:34] ID: 10012
+[2026-05-15 06:11:34] Column: group_name
+[2026-05-15 06:11:34] Value: АНГЛ-3
+[2026-05-15 06:11:34] ERROR: Column not allowed - group_name
+[2026-05-15 06:11:40] === updateStudentCell CALLED ===
+[2026-05-15 06:11:40] ID: 10012
+[2026-05-15 06:11:40] Column: admission_year
+[2026-05-15 06:11:40] Value: 2020
+[2026-05-15 06:11:40] SQL: UPDATE students SET `admission_year` = :value WHERE `stud_id` = :id
+[2026-05-15 06:11:40] SUCCESS! Rows affected: 0
+[2026-05-15 06:13:05] === updateStudentCell CALLED ===
+[2026-05-15 06:13:05] ID: 10103
+[2026-05-15 06:13:05] Column: студент
+[2026-05-15 06:13:05] Value: Корчагин Евгений Алексеевич
+[2026-05-15 06:13:05] ERROR: Column not allowed - студент
+[2026-05-15 06:29:26] === updateAnyTableCell CALLED ===
+[2026-05-15 06:29:26] Table: students
+[2026-05-15 06:29:26] ID: 10038
+[2026-05-15 06:29:26] Column: студент
+[2026-05-15 06:29:26] Value: Колесникова Вера Павлова
+[2026-05-15 06:29:26] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-15 06:29:35] === updateAnyTableCell CALLED ===
+[2026-05-15 06:29:35] Table: students
+[2026-05-15 06:29:35] ID: 10038
+[2026-05-15 06:29:35] Column: студент
+[2026-05-15 06:29:35] Value: Колесникова Вера Павлова
+[2026-05-15 06:29:35] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
