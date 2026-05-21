@@ -122,3 +122,166 @@
 [2026-05-15 06:29:35] Column: студент
 [2026-05-15 06:29:35] Value: Колесникова Вера Павлова
 [2026-05-15 06:29:35] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:27:59] === updateAnyTableCell CALLED ===
+[2026-05-20 17:27:59] Table: departments
+[2026-05-20 17:27:59] ID: 1
+[2026-05-20 17:27:59] Column: head_dep
+[2026-05-20 17:27:59] Value: Иксанова Рамиля Мингазитдиновна
+[2026-05-20 17:27:59] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:27:59] === updateAnyTableCell CALLED ===
+[2026-05-20 17:27:59] Table: departments
+[2026-05-20 17:27:59] ID: 1
+[2026-05-20 17:27:59] Column: head_dep
+[2026-05-20 17:27:59] Value: Иксанова Рамиля Мингазитдиновна
+[2026-05-20 17:27:59] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:50:18] === updateAnyTableCell CALLED ===
+[2026-05-20 17:50:18] Table: departments
+[2026-05-20 17:50:18] ID: 1
+[2026-05-20 17:50:18] Column: head_dep
+[2026-05-20 17:50:18] Value: Иксанова Рамиля Мингазитдиновна
+[2026-05-20 17:50:18] Primary key: dep_id
+[2026-05-20 17:50:18] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:51:13] === updateAnyTableCell CALLED ===
+[2026-05-20 17:51:13] Table: teacher
+[2026-05-20 17:51:13] ID: 9
+[2026-05-20 17:51:13] Column: departments_dep_id
+[2026-05-20 17:51:13] Value: Загрузка...
+[2026-05-20 17:51:13] Primary key: teach_id
+[2026-05-20 17:51:13] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:51:34] === updateAnyTableCell CALLED ===
+[2026-05-20 17:51:34] Table: teacher
+[2026-05-20 17:51:34] ID: 9
+[2026-05-20 17:51:34] Column: departments_dep_id
+[2026-05-20 17:51:34] Value: Загрузка...
+[2026-05-20 17:51:34] Primary key: teach_id
+[2026-05-20 17:51:34] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:51:41] === updateAnyTableCell CALLED ===
+[2026-05-20 17:51:41] Table: teacher
+[2026-05-20 17:51:41] ID: 9
+[2026-05-20 17:51:41] Column: departments_dep_id
+[2026-05-20 17:51:41] Value: Загрузка...
+[2026-05-20 17:51:41] Primary key: teach_id
+[2026-05-20 17:51:41] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-20 17:51:50] === updateAnyTableCell CALLED ===
+[2026-05-20 17:51:50] Table: teacher
+[2026-05-20 17:51:50] ID: 9
+[2026-05-20 17:51:50] Column: departments_dep_id
+[2026-05-20 17:51:50] Value: Загрузка...
+[2026-05-20 17:51:50] Primary key: teach_id
+[2026-05-20 17:51:50] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-21 03:33:45] === updateAnyTableCell CALLED ===
+[2026-05-21 03:33:45] Table: teacher
+[2026-05-21 03:33:45] ID: 9
+[2026-05-21 03:33:45] Column: teach_name
+[2026-05-21 03:33:45] Value: Айдар Галямов
+[2026-05-21 03:33:45] Primary key: teach_id
+[2026-05-21 03:33:45] EXCEPTION: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '?' at line 1
+[2026-05-21 03:36:09] === updateAnyTableCell CALLED ===
+[2026-05-21 03:36:09] Table: teacher
+[2026-05-21 03:36:09] ID: 9
+[2026-05-21 03:36:09] Column: teach_name
+[2026-05-21 03:36:09] Value: Айдар Галямов
+[2026-05-21 03:36:09] Primary key: teach_id
+[2026-05-21 03:36:09] SQL: UPDATE `teacher` SET `teach_name` = ? WHERE `teach_id` = ?
+[2026-05-21 03:36:09] SUCCESS! Rows affected: 1
+[2026-05-21 03:36:35] === updateAnyTableCell CALLED ===
+[2026-05-21 03:36:35] Table: groups
+[2026-05-21 03:36:35] ID: 3
+[2026-05-21 03:36:35] Column: group_name
+[2026-05-21 03:36:35] Value: АНГЛи-3
+[2026-05-21 03:36:35] Primary key: group_id
+[2026-05-21 03:36:35] SQL: UPDATE `groups` SET `group_name` = ? WHERE `group_id` = ?
+[2026-05-21 03:36:35] SUCCESS! Rows affected: 1
+[2026-05-21 03:36:46] === updateAnyTableCell CALLED ===
+[2026-05-21 03:36:46] Table: groups
+[2026-05-21 03:36:46] ID: 3
+[2026-05-21 03:36:46] Column: departments_dep_id
+[2026-05-21 03:36:46] Value: Загрузка...
+[2026-05-21 03:36:46] Primary key: group_id
+[2026-05-21 03:36:46] SQL: UPDATE `groups` SET `departments_dep_id` = ? WHERE `group_id` = ?
+[2026-05-21 03:36:46] EXCEPTION: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`student_performance`.`groups`, CONSTRAINT `fk_groups_departments1` FOREIGN KEY (`departments_dep_id`) REFERENCES `departments` (`dep_id`))
+[2026-05-21 03:36:58] === updateAnyTableCell CALLED ===
+[2026-05-21 03:36:58] Table: groups
+[2026-05-21 03:36:58] ID: 3
+[2026-05-21 03:36:58] Column: course
+[2026-05-21 03:36:58] Value: 2
+[2026-05-21 03:36:58] Primary key: group_id
+[2026-05-21 03:36:59] SQL: UPDATE `groups` SET `course` = ? WHERE `group_id` = ?
+[2026-05-21 03:36:59] SUCCESS! Rows affected: 1
+[2026-05-21 03:37:11] === updateAnyTableCell CALLED ===
+[2026-05-21 03:37:11] Table: departments
+[2026-05-21 03:37:11] ID: 8
+[2026-05-21 03:37:11] Column: phone
+[2026-05-21 03:37:11] Value: +7(347)272-98-40
+[2026-05-21 03:37:11] Primary key: dep_id
+[2026-05-21 03:37:11] SQL: UPDATE `departments` SET `phone` = ? WHERE `dep_id` = ?
+[2026-05-21 03:37:11] SUCCESS! Rows affected: 1
+[2026-05-21 03:38:20] === addRecord CALLED ===
+[2026-05-21 03:38:20] Table: departments
+[2026-05-21 03:38:20] Data: Array
+(
+    [dep_name] => Кафедра Романского языков
+    [head_dep] => Разимов Рина Руслановна
+    [phone] => +7 999 099 97 76
+    [faculties_fac_id] => 3
+)
+
+[2026-05-21 03:38:20] SUCCESS: Added record with ID: 12
+[2026-05-21 03:38:31] === deleteRecord CALLED ===
+[2026-05-21 03:38:31] Table: departments, ID: 12, ID Column: dep_id
+[2026-05-21 03:38:31] SUCCESS: Record deleted
+[2026-05-21 03:38:39] === deleteRecord CALLED ===
+[2026-05-21 03:38:39] Table: departments, ID: 11, ID Column: dep_id
+[2026-05-21 03:39:18] === addRecord CALLED ===
+[2026-05-21 03:39:18] Table: faculties
+[2026-05-21 03:39:18] Data: Array
+(
+    [fac_name] => Факультет патриотизма
+    [dean_name] => А А А
+    [building_number] => 3
+)
+
+[2026-05-21 03:39:18] SUCCESS: Added record with ID: 4
+[2026-05-21 03:39:24] === deleteRecord CALLED ===
+[2026-05-21 03:39:24] Table: faculties, ID: 4, ID Column: fac_id
+[2026-05-21 03:39:24] SUCCESS: Record deleted
+[2026-05-21 03:39:30] === deleteRecord CALLED ===
+[2026-05-21 03:39:30] Table: faculties, ID: 3, ID Column: fac_id
+[2026-05-21 03:39:43] === deleteRecord CALLED ===
+[2026-05-21 03:39:43] Table: teacher, ID: 3, ID Column: teach_id
+[2026-05-21 03:40:15] === updateStudent CALLED ===
+[2026-05-21 03:40:15] ID: 10012, Data: Array
+(
+    [stud_id] => 10012
+    [full_name] => Антонова Марина Витальевна
+    [stud_phone] => +79171234578
+    [birth_date] => 2005
+    [admission_year] => 2020
+    [gender] => Женский
+    [adress] => ул. Заводская, д. 8
+    [city] => Уфа
+    [group_id] => 17
+)
+
+[2026-05-21 03:40:47] === updateStudent CALLED ===
+[2026-05-21 03:40:47] ID: 10036, Data: Array
+(
+    [stud_id] => 10036
+    [groups_group_id] => 8
+    [field] => group_id
+)
+
+[2026-05-21 03:41:24] === deleteStudent CALLED ===
+[2026-05-21 03:41:24] ID: 10024
+[2026-05-21 03:48:48] === deleteStudentCascade CALLED ===
+[2026-05-21 03:48:48] Student ID: 10019
+[2026-05-21 03:48:48] Deleted 1 records from reexams
+[2026-05-21 03:48:48] Deleted 3 records from grades
+[2026-05-21 03:48:48] Deleted 1 student record
+[2026-05-21 03:48:48] SUCCESS: Student 10019 completely deleted with all related data
+[2026-05-21 03:49:02] === deleteStudentCascade CALLED ===
+[2026-05-21 03:49:02] Student ID: 10093
+[2026-05-21 03:49:02] Deleted 1 records from reexams
+[2026-05-21 03:49:02] Deleted 3 records from grades
+[2026-05-21 03:49:02] Deleted 1 student record
+[2026-05-21 03:49:02] SUCCESS: Student 10093 completely deleted with all related data
