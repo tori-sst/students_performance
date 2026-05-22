@@ -285,3 +285,32 @@
 [2026-05-21 03:49:02] Deleted 3 records from grades
 [2026-05-21 03:49:02] Deleted 1 student record
 [2026-05-21 03:49:02] SUCCESS: Student 10093 completely deleted with all related data
+[2026-05-21 11:23:24] === addRecord CALLED ===
+[2026-05-21 11:23:24] Table: faculties
+[2026-05-21 11:23:24] Data: Array
+(
+    [fac_name] => Факультет патриотизма
+    [dean_name] => А А А
+    [building_number] => 3
+)
+
+[2026-05-21 11:23:24] SUCCESS: Added record with ID: 5
+[2026-05-21 11:23:57] === addRecord CALLED ===
+[2026-05-21 11:23:57] Table: departments
+[2026-05-21 11:23:57] Data: Array
+(
+    [dep_name] => Кафедра Романского языков
+    [head_dep] => Разимов Рина Руслановна
+    [phone] => +7 999 099 97 76
+    [faculties_fac_id] => 5
+)
+
+[2026-05-21 11:23:57] SUCCESS: Added record with ID: 13
+[2026-05-21 11:24:11] === deleteRecord CALLED ===
+[2026-05-21 11:24:11] Table: faculties, ID: 5, ID Column: fac_id
+[2026-05-21 11:24:28] === deleteRecord CALLED ===
+[2026-05-21 11:24:28] Table: departments, ID: 13, ID Column: dep_id
+[2026-05-21 11:24:28] SUCCESS: Record deleted
+[2026-05-21 11:24:34] === deleteRecord CALLED ===
+[2026-05-21 11:24:34] Table: faculties, ID: 5, ID Column: fac_id
+[2026-05-21 11:24:34] SUCCESS: Record deleted
