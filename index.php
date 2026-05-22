@@ -200,6 +200,16 @@ switch ($page) {
         $studentsData = getAllStudentsWithDetails($pdo, $search);
         break;
 
+    case 'manage':
+        $title = "Управление студентами";
+        $studentsList = $pdo->query("
+            SELECT s.stud_id, s.full_name, g.group_name, g.group_id 
+            FROM students s 
+            JOIN `groups` g ON s.groups_group_id = g.group_id 
+            ORDER BY s.full_name
+        ")->fetchAll();
+        break;
+
     case 'archive':
         $title = "Архив выпускников";
         try {
@@ -304,7 +314,6 @@ switch ($page) {
         break;
     
     default:
-        // Дашборд
         break;
 }
 
@@ -315,22 +324,22 @@ function renderTable($pdo, $query, $page = '', $showActions = false) {
         $data = $res->fetchAll();
         if (!$data) { echo '<div class="p-10 text-center"><i class="fas fa-search text-4xl text-gray-200 mb-3"></i><p class="text-gray-400">Ничего не найдено</p></div>'; return; }
         $cols = array_keys($data[0]);
-        echo '<div class="overflow-x-auto"><table class="w-full text-left border-collapse"><thead class="bg-gray-50 border-b"><tr>';
-        foreach ($cols as $c) echo '<th class="px-6 py-4">' . htmlspecialchars($c) . '</th>';
-        if ($showActions) echo '<th class="px-6 py-4 text-center">Действия</th>';
+        echo '<div class="overflow-x-auto"><table class="data-table w-full"><thead class="bg-gray-50"><tr>';
+        foreach ($cols as $c) echo '<th class="px-6 py-3">' . htmlspecialchars($c) . '</th>';
+        if ($showActions) echo '<th class="px-6 py-3 text-center">Действия</th>';
         echo '</thead><tbody>';
         foreach ($data as $row) {
-            echo '<tr class="hover:bg-blue-50">';
+            echo '<tr class="hover:bg-gray-50">';
             foreach ($row as $key => $val) {
-                echo '<td class="px-6 py-4 text-sm">';
-                if ($key === 'ID' && isset($row['ID'])) echo '<a href="?page=student_info&id=' . $val . '" class="text-blue-600 hover:underline">' . htmlspecialchars($val) . '</a>';
+                echo '<td class="px-6 py-3">';
+                if ($key === 'ID' && isset($row['ID'])) echo '<a href="?page=student_info&id=' . $val . '" class="text-blue-600 hover:underline font-mono">' . htmlspecialchars($val) . '</a>';
                 elseif ($key === 'ID_F') echo '<a href="?page=students&fac_id=' . $val . '" class="text-blue-600">Смотреть факультет</a>';
                 elseif ($key === 'ID_D') echo '<a href="?page=students&dep_id=' . $val . '" class="text-emerald-600">Смотреть кафедру</a>';
                 elseif ($key === 'ID_G') echo '<a href="?page=students&group_id=' . $val . '" class="text-purple-600">Смотреть группу</a>';
                 else echo htmlspecialchars($val);
                 echo '</td>';
             }
-            if ($showActions && isset($row['ID'])) echo '<td class="text-center"><a href="?page=student_info&id=' . $row['ID'] . '" class="text-blue-500"><i class="fas fa-address-card"></i></a></td>';
+            if ($showActions && isset($row['ID'])) echo '<td class="px-6 py-3 text-center"><a href="?page=student_info&id=' . $row['ID'] . '" class="text-blue-500"><i class="fas fa-address-card"></i></a></td>';
             echo '</tr>';
         }
         echo '</tbody></table></div>';
@@ -353,22 +362,22 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
     }
     
     $cols = array_keys($data[0]);
-    echo '<div class="overflow-x-auto"><table class="w-full text-left border-collapse" id="adminTable"><thead class="bg-gray-50 border-b"><tr>';
-    foreach ($cols as $c) echo '<th class="px-6 py-4">' . htmlspecialchars($c) . '</th>';
-    echo '<th class="px-6 py-4 text-center">Удалить</th>';
+    echo '<div class="overflow-x-auto"><table class="data-table w-full" id="adminTable"><thead class="bg-gray-50"><tr>';
+    foreach ($cols as $c) echo '<th class="px-6 py-3">' . htmlspecialchars($c) . '</th>';
+    echo '<th class="px-6 py-3 text-center">Удалить</th>';
     echo '</thead><tbody>';
     foreach ($data as $row) {
-        echo '<tr data-id="' . $row[$idColumn] . '">';
+        echo '<tr data-id="' . $row[$idColumn] . '" class="hover:bg-gray-50">';
         foreach ($row as $key => $val) {
-            echo '<td class="px-6 py-4 text-sm" data-column="' . htmlspecialchars($key) . '">';
+            echo '<td class="px-6 py-3" data-column="' . htmlspecialchars($key) . '">';
             if ($key != $idColumn) {
-                echo '<span class="editable-cell" onclick="editCell(this)" data-table="' . $table . '" data-id="' . $row[$idColumn] . '" data-column="' . htmlspecialchars($key) . '">' . nl2br(htmlspecialchars($val)) . '</span>';
+                echo '<span class="admin-editable-cell" onclick="editCell(this)" data-table="' . $table . '" data-id="' . $row[$idColumn] . '" data-column="' . htmlspecialchars($key) . '">' . nl2br(htmlspecialchars($val)) . '</span>';
             } else {
                 echo htmlspecialchars($val);
             }
             echo '</td>';
         }
-        echo '<td class="text-center"><button onclick="deleteRecord(\'' . $table . '\', \'' . $row[$idColumn] . '\', \'' . $idColumn . '\')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></td>';
+        echo '<td class="px-6 py-3 text-center"><button onclick="deleteRecord(\'' . $table . '\', \'' . $row[$idColumn] . '\', \'' . $idColumn . '\')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></td>';
         echo '</tr>';
     }
     echo '</tbody></table></div>';
@@ -418,7 +427,29 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
         .stat-card { transition: transform 0.2s; cursor: pointer; }
         .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         
-        .editable-cell {
+        /* Единые стили для всех таблиц */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-table thead th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        /* Стили для админ-таблиц */
+        .admin-editable-cell {
             cursor: pointer;
             padding: 4px 8px;
             border-radius: 4px;
@@ -426,21 +457,47 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
             display: inline-block;
             min-width: 50px;
         }
-        .editable-cell:hover {
+        .admin-editable-cell:hover {
             background-color: #e0f2fe !important;
         }
-        .editable-cell.editing {
+        .admin-editable-cell.editing {
             background-color: #fef08a;
             padding: 0;
         }
-        .editable-cell.editing input, 
-        .editable-cell.editing select {
+        .admin-editable-cell.editing input, 
+        .admin-editable-cell.editing select {
             border: 2px solid #3b82f6;
             padding: 4px 8px;
             border-radius: 4px;
             outline: none;
             width: 100%;
             background: white;
+        }
+        
+        /* Стили для редактируемых ячеек студентов */
+        .student-editable-cell {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 6px;
+            padding: 4px 8px;
+            display: inline-block;
+        }
+        .student-editable-cell:hover {
+            background-color: #fff3cd !important;
+        }
+        .student-editable-cell.editing {
+            background-color: #fef08a;
+            padding: 0;
+        }
+        .student-editable-cell.editing input,
+        .student-editable-cell.editing select {
+            border: 2px solid #3b82f6;
+            padding: 6px 10px;
+            border-radius: 6px;
+            outline: none;
+            width: 100%;
+            background: white;
+            font-size: 14px;
         }
         
         .modal {
@@ -460,15 +517,14 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
         }
         .modal-content {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             max-width: 600px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
         
         .admin-badge { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .edit-mode-btn { background: linear-gradient(135deg, #10b981, #059669); }
         .delete-btn { color: #ef4444; cursor: pointer; }
         .delete-btn:hover { color: #dc2626; }
         
@@ -488,6 +544,14 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .manage-card {
+            transition: all 0.3s ease;
+        }
+        .manage-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -519,6 +583,13 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                 <a href="?page=add_grade" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= $page=='add_grade'?'bg-blue-600':'' ?>"><i class="fas fa-pen w-6"></i> Выставить оценку</a>
             </section>
             <section>
+                <p class="text-xs text-slate-500 uppercase mb-2">Управление</p>
+                <a href="?page=manage" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= $page=='manage'?'bg-blue-600':'' ?>"><i class="fas fa-users-cog w-6"></i> Управление студентами</a>
+                <a href="?page=add_group" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= $page=='add_group'?'bg-blue-600':'' ?>"><i class="fas fa-plus-circle w-6"></i> Добавить группу</a>
+                <a href="?page=annual_promotion" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= $page=='annual_promotion'?'bg-blue-600':'' ?>"><i class="fas fa-calendar-alt w-6"></i> Годовой перевод</a>
+                <a href="?page=archive" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= $page=='archive'?'bg-blue-600':'' ?>"><i class="fas fa-archive w-6"></i> Архив</a>
+            </section>
+            <section>
                 <p class="text-xs text-slate-500 uppercase mb-2">Администрирование</p>
                 <?php if ($isAdmin): ?>
                     <a href="?page=admin&admin_section=faculties" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= ($page=='admin' && $adminSection=='faculties')?'bg-blue-600':'' ?>"><i class="fas fa-building w-6"></i> Факультеты</a>
@@ -526,19 +597,8 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                     <a href="?page=admin&admin_section=groups" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= ($page=='admin' && $adminSection=='groups')?'bg-blue-600':'' ?>"><i class="fas fa-users w-6"></i> Группы</a>
                     <a href="?page=admin&admin_section=teachers" class="flex items-center p-2 rounded-lg hover:bg-slate-800 <?= ($page=='admin' && $adminSection=='teachers')?'bg-blue-600':'' ?>"><i class="fas fa-chalkboard-teacher w-6"></i> Преподаватели</a>
                     <hr class="my-2 border-slate-700">
-                    <a href="?page=dep_data" class="flex items-center p-2 rounded-lg hover:bg-slate-800"><i class="fas fa-building w-6"></i> Кафедры (просмотр)</a>
-                    <a href="?page=groups_data" class="flex items-center p-2 rounded-lg hover:bg-slate-800"><i class="fas fa-users w-6"></i> Группы (просмотр)</a>
-                    <a href="?page=teacher_load" class="flex items-center p-2 rounded-lg hover:bg-slate-800"><i class="fas fa-chalkboard-teacher w-6"></i> Преподаватели</a>
-                    <a href="?page=add_group" class="flex items-center p-2 rounded-lg bg-green-700/20 mt-2 border border-green-500/30"><i class="fas fa-plus-circle w-6 text-green-300"></i><span class="text-green-300"> Добавить группу</span></a>
-                    <a href="?page=annual_promotion" class="flex items-center p-2 rounded-lg bg-yellow-700/20 mt-2 border border-yellow-500/30"><i class="fas fa-calendar-alt w-6 text-yellow-400"></i><span class="text-yellow-300">Годовой перевод</span></a>
-                    <a href="?page=archive" class="flex items-center p-2 rounded-lg bg-gray-700/20 mt-2 border border-gray-500/30"><i class="fas fa-archive w-6 text-gray-400"></i><span class="text-gray-300">Архив</span></a>
-                    <a href="#" onclick="showAddStudentModal()" class="flex items-center p-2 rounded-lg bg-green-700/20 mt-2 border border-green-500/30"><i class="fas fa-user-plus w-6 text-green-300"></i><span class="text-green-300">Добавить студента</span></a>
                     <a href="#" onclick="logoutAdmin()" class="flex items-center p-2 rounded-lg bg-red-700/20 mt-2 border border-red-500/30"><i class="fas fa-sign-out-alt w-6 text-red-300"></i><span class="text-red-300">Выйти из админ-режима</span></a>
                 <?php else: ?>
-                    <a href="?page=dep_data" class="flex items-center p-2 rounded-lg hover:bg-slate-800"><i class="fas fa-building w-6"></i> Кафедры</a>
-                    <a href="?page=groups_data" class="flex items-center p-2 rounded-lg hover:bg-slate-800"><i class="fas fa-users w-6"></i> Группы</a>
-                    <a href="?page=teacher_load" class="flex items-center p-2 rounded-lg hover:bg-slate-800"><i class="fas fa-chalkboard-teacher w-6"></i> Преподаватели</a>
-                    <a href="?page=archive" class="flex items-center p-2 rounded-lg bg-gray-700/20 mt-2 border border-gray-500/30"><i class="fas fa-archive w-6 text-gray-400"></i><span class="text-gray-300">Архив</span></a>
                     <a href="#" onclick="showAdminLogin()" class="flex items-center p-2 rounded-lg bg-purple-700/20 mt-2 border border-purple-500/30"><i class="fas fa-shield-alt w-6 text-purple-300"></i><span class="text-purple-300">Вход для администратора</span></a>
                 <?php endif; ?>
             </section>
@@ -557,10 +617,185 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
         </header>
         
         <div class="p-6">
-            <!-- Поиск для all_students -->
-            <?php if ($page === 'all_students'): ?>
-                <div class="mb-6 flex gap-4">
-                    <form method="GET" class="flex-1">
+            <!-- Управление студентами -->
+            <?php if ($page === 'manage'): ?>
+                <?php if (isset($_GET['success'])): ?>
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">✅ Студент успешно добавлен!</div>
+                <?php endif; ?>
+                <?php if (isset($_GET['error'])): ?>
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">❌ Ошибка: <?= htmlspecialchars($_GET['error']) ?></div>
+                <?php endif; ?>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="manage-card bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="bg-gradient-to-r from-green-600 to-green-700 p-4">
+                            <h3 class="text-white font-bold text-lg"><i class="fas fa-user-plus mr-2"></i> Добавление студента</h3>
+                            <p class="text-green-100 text-sm">Заполните форму для добавления нового студента</p>
+                        </div>
+                        <div class="p-6">
+                            <form action="actions.php" method="POST" class="space-y-4">
+                                <input type="hidden" name="action" value="add_student">
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ID студента *</label>
+                                        <input type="number" name="stud_id" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Год рождения</label>
+                                        <input type="number" name="birth_date" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ФИО *</label>
+                                    <input type="text" name="full_name" required class="w-full p-2 border rounded-lg">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Год поступления</label>
+                                        <input type="number" name="admission_year" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Пол</label>
+                                        <select name="gender" class="w-full p-2 border rounded-lg">
+                                            <option>Мужской</option>
+                                            <option>Женский</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                                        <input type="text" name="phone" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Город</label>
+                                        <input type="text" name="city" value="Уфа" class="w-full p-2 border rounded-lg">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Адрес</label>
+                                    <input type="text" name="address" class="w-full p-2 border rounded-lg">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Группа *</label>
+                                    <select name="group_id" required class="w-full p-2 border rounded-lg">
+                                        <option value="">Выберите группу</option>
+                                        <?php foreach($pdo->query("SELECT group_id, group_name, course FROM `groups` ORDER BY course, group_name") as $group): ?>
+                                        <option value="<?= $group['group_id'] ?>"><?= htmlspecialchars($group['group_name']) ?> (<?= $group['course'] ?> курс)</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-semibold">
+                                    <i class="fas fa-save mr-2"></i> Добавить студента
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="manage-card bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
+                            <h3 class="text-white font-bold text-lg"><i class="fas fa-exchange-alt mr-2"></i> Перевод студента</h3>
+                            <p class="text-blue-100 text-sm">Переместите студента в другую группу</p>
+                        </div>
+                        <div class="p-6">
+                            <form action="actions.php" method="POST" class="space-y-4">
+                                <input type="hidden" name="action" value="transfer">
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Студент</label>
+                                    <select name="stud_id" required class="w-full p-2 border rounded-lg">
+                                        <option value="">Выберите студента</option>
+                                        <?php 
+                                        $students = $pdo->query("
+                                            SELECT s.stud_id, s.full_name, g.group_name 
+                                            FROM students s 
+                                            JOIN `groups` g ON s.groups_group_id = g.group_id 
+                                            ORDER BY s.full_name
+                                        ");
+                                        foreach($students as $student): 
+                                        ?>
+                                        <option value="<?= $student['stud_id'] ?>"><?= htmlspecialchars($student['full_name']) ?> (<?= htmlspecialchars($student['group_name']) ?>)</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Новая группа</label>
+                                    <select name="new_group_id" required class="w-full p-2 border rounded-lg">
+                                        <option value="">Выберите группу</option>
+                                        <?php foreach($pdo->query("SELECT group_id, group_name, course FROM `groups` ORDER BY course, group_name") as $group): ?>
+                                        <option value="<?= $group['group_id'] ?>"><?= htmlspecialchars($group['group_name']) ?> (<?= $group['course'] ?> курс)</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-semibold">
+                                    <i class="fas fa-arrow-right mr-2"></i> Перевести студента
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="manage-card bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="bg-gradient-to-r from-red-600 to-red-700 p-4">
+                            <h3 class="text-white font-bold text-lg"><i class="fas fa-trash-alt mr-2"></i> Удаление студента</h3>
+                            <p class="text-red-100 text-sm">⚠️ Безвозвратное удаление с каскадным эффектом</p>
+                        </div>
+                        <div class="p-6">
+                            <form action="actions.php" method="POST" class="space-y-4" onsubmit="return confirm('Вы уверены, что хотите удалить этого студента? Все его оценки и пересдачи также будут удалены!')">
+                                <input type="hidden" name="action" value="delete_student_proc">
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ID студента</label>
+                                    <input type="number" name="stud_id" required class="w-full p-2 border rounded-lg" placeholder="Введите ID студента">
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition font-semibold">
+                                    <i class="fas fa-trash-alt mr-2"></i> Удалить студента
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="manage-card bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="bg-gradient-to-r from-gray-600 to-gray-700 p-4">
+                            <h3 class="text-white font-bold text-lg"><i class="fas fa-list mr-2"></i> Список студентов</h3>
+                            <p class="text-gray-100 text-sm">Всего студентов: <?= count($studentsList) ?></p>
+                        </div>
+                        <div class="p-0 max-h-96 overflow-y-auto">
+                            <table class="data-table">
+                                <thead class="bg-gray-50 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-2 text-sm">ID</th>
+                                        <th class="px-4 py-2 text-sm">ФИО</th>
+                                        <th class="px-4 py-2 text-sm">Группа</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($studentsList as $student): ?>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="px-4 py-2 text-sm"><a href="?page=student_info&id=<?= $student['stud_id'] ?>" class="text-blue-600 hover:underline font-mono"><?= $student['stud_id'] ?></a></td>
+                                        <td class="px-4 py-2 text-sm"><?= htmlspecialchars($student['full_name']) ?></td>
+                                        <td class="px-4 py-2 text-sm"><?= htmlspecialchars($student['group_name']) ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            <!-- Страница со всеми студентами с редактированием и удалением -->
+            <?php elseif ($page === 'all_students'): ?>
+                <div class="mb-6 flex gap-4 flex-wrap">
+                    <form method="GET" class="flex-1 min-w-[200px]">
                         <input type="hidden" name="page" value="all_students">
                         <div class="relative">
                             <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -568,35 +803,19 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                         </div>
                     </form>
                     <?php if ($isAdmin): ?>
-                    <button onclick="enableStudentEditMode()" class="edit-mode-btn text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                        <i class="fas fa-edit"></i> Режим редактирования
+                    <button onclick="enableEditMode()" id="editModeBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-indigo-700 transition shrink-0">
+                        <i class="fas fa-edit"></i> Включить режим редактирования
                     </button>
-                    <button onclick="showAddStudentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <button onclick="showAddStudentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition shrink-0">
                         <i class="fas fa-user-plus"></i> Добавить студента
                     </button>
                     <?php endif; ?>
                 </div>
-            <?php endif; ?>
-            
-            <!-- Поиск для страниц с таблицами -->
-            <?php if ($page !== 'students' && $page !== 'student_info' && $page !== 'teacher_panel' && $page !== 'add_grade' && $page !== 'add_group' && $page !== 'annual_promotion' && $page !== 'dashboard' && $page !== 'all_students' && $page !== 'admin' && $query && $page !== 'dep_data' && $page !== 'groups_data' && $page !== 'teacher_load'): ?>
-                <div class="mb-6">
-                    <form method="GET" class="max-w-md">
-                        <input type="hidden" name="page" value="<?= $page ?>">
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Поиск" class="w-full pl-10 pr-4 py-2 border rounded-lg">
-                        </div>
-                    </form>
-                </div>
-            <?php endif; ?>
-            
-            <!-- Страница со всеми студентами -->
-            <?php if ($page === 'all_students'): ?>
+                
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse" id="studentsTable">
-                            <thead class="bg-gray-50 border-b">
+                        <table class="data-table" id="studentsTable">
+                            <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-4 py-3">ID</th>
                                     <th class="px-4 py-3">ФИО</th>
@@ -609,36 +828,98 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                                     <?php if ($isAdmin): ?>
                                     <th class="px-4 py-3 text-center">Действия</th>
                                     <?php endif; ?>
-                                 </tr>
+                                </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($studentsData as $student): ?>
-                                <tr data-student-id="<?= $student['ID'] ?>" data-group-id="<?= $student['group_id'] ?>">
-                                    <td class="px-4 py-3 font-mono text-sm"><?= htmlspecialchars($student['ID']) ?></td>
-                                    <td class="px-4 py-3 editable-student-cell" data-field="full_name"><?= htmlspecialchars($student['ФИО']) ?></td>
-                                    <td class="px-4 py-3 editable-student-cell" data-field="stud_phone"><?= htmlspecialchars($student['Телефон']) ?></td>
-                                    <td class="px-4 py-3 editable-student-cell" data-field="birth_date"><?= htmlspecialchars($student['Год рождения']) ?></td>
-                                    <td class="px-4 py-3 editable-student-cell" data-field="admission_year"><?= htmlspecialchars($student['Год поступления']) ?></td>
-                                    <td class="px-4 py-3 editable-student-cell" data-field="group_name" data-group-id-field="groups_group_id"><?= htmlspecialchars($student['Группа']) ?></td>
+                                <tr data-student-id="<?= $student['ID'] ?>" data-group-id="<?= $student['group_id'] ?>" class="hover:bg-gray-50">
+                                    <td class="px-4 py-3"><a href="?page=student_info&id=<?= $student['ID'] ?>" class="text-blue-600 hover:underline font-mono"><?= htmlspecialchars($student['ID']) ?></a></td>
+                                    <td class="px-4 py-3"><span class="student-editable-cell" data-field="full_name" data-original="<?= htmlspecialchars($student['ФИО']) ?>"><?= htmlspecialchars($student['ФИО']) ?></span></td>
+                                    <td class="px-4 py-3"><span class="student-editable-cell" data-field="stud_phone" data-original="<?= htmlspecialchars($student['Телефон']) ?>"><?= htmlspecialchars($student['Телефон']) ?></span></td>
+                                    <td class="px-4 py-3"><span class="student-editable-cell" data-field="birth_date" data-original="<?= htmlspecialchars($student['Год рождения']) ?>"><?= htmlspecialchars($student['Год рождения']) ?></span></td>
+                                    <td class="px-4 py-3"><span class="student-editable-cell" data-field="admission_year" data-original="<?= htmlspecialchars($student['Год поступления']) ?>"><?= htmlspecialchars($student['Год поступления']) ?></span></td>
+                                    <td class="px-4 py-3">
+                                        <span class="student-editable-cell" data-field="groups_group_id" data-original="<?= $student['group_id'] ?>" data-display="<?= htmlspecialchars($student['Группа']) ?>">
+                                            <span class="display-value"><?= htmlspecialchars($student['Группа']) ?></span>
+                                        </span>
+                                    </td>
                                     <td class="px-4 py-3"><?= htmlspecialchars($student['Курс']) ?></td>
                                     <td class="px-4 py-3"><?= htmlspecialchars($student['Кафедра']) ?></td>
                                     <?php if ($isAdmin): ?>
                                     <td class="px-4 py-3 text-center">
-                                        <button onclick="editStudent(<?= $student['ID'] ?>)" class="text-blue-500 hover:text-blue-700 mr-2" title="Редактировать">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button onclick="deleteStudentRecord(<?= $student['ID'] ?>)" class="delete-btn" title="Удалить">
+                                        <button onclick="deleteStudent(<?= $student['ID'] ?>)" class="text-red-500 hover:text-red-700 transition" title="Удалить">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                      </td>
+                                    </td>
                                     <?php endif; ?>
-                                 </tr>
+                                </tr>
                                 <?php endforeach; ?>
                                 <?php if (empty($studentsData)): ?>
-                                <tr><td colspan="9" class="px-4 py-8 text-center text-gray-400">Нет студентов для отображения</td></tr>
+                                <tr>
+                                    <td colspan="9" class="px-4 py-8 text-center text-gray-400">Нет студентов для отображения</td>
+                                </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                
+                <!-- Модальное окно добавления студента -->
+                <div id="addStudentModal" class="modal">
+                    <div class="modal-content p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Добавление студента</h3>
+                            <button onclick="closeAddStudentModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                        </div>
+                        <form id="addStudentForm" onsubmit="addNewStudent(event)">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">ID студента *</label>
+                                    <input type="number" name="stud_id" required class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Год рождения</label>
+                                    <input type="number" name="birth_date" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium mb-1">ФИО *</label>
+                                    <input type="text" name="full_name" required class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Год поступления</label>
+                                    <input type="number" name="admission_year" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Пол</label>
+                                    <select name="gender" class="w-full p-2 border rounded-lg">
+                                        <option>Мужской</option>
+                                        <option>Женский</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Телефон</label>
+                                    <input type="text" name="stud_phone" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Город</label>
+                                    <input type="text" name="city" value="Уфа" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium mb-1">Адрес</label>
+                                    <input type="text" name="adress" class="w-full p-2 border rounded-lg">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium mb-1">Группа *</label>
+                                    <select name="group_id" required class="w-full p-2 border rounded-lg">
+                                        <option value="">Выберите группу</option>
+                                        <?php foreach($pdo->query("SELECT group_id, group_name, course FROM `groups` ORDER BY course, group_name") as $group): ?>
+                                        <option value="<?= $group['group_id'] ?>"><?= htmlspecialchars($group['group_name']) ?> (<?= $group['course'] ?> курс)</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg mt-4 hover:bg-green-700 transition">Добавить студента</button>
+                        </form>
                     </div>
                 </div>
                 
@@ -671,6 +952,37 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                 
             <!-- Страница реестра (students) -->
             <?php elseif ($page === 'students'): ?>
+                <?php if (!isset($_GET['global_search']) && !$type && !$fac_id && !$dep_id && !$group_id): ?>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <a href="?page=all_students" class="stat-card block">
+                            <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl text-white shadow-lg">
+                                <i class="fas fa-users text-4xl opacity-80 mb-4"></i>
+                                <h4 class="text-lg uppercase">Студентов</h4>
+                                <p class="text-5xl font-black"><?= $pdo->query("SELECT COUNT(*) FROM students")->fetchColumn() ?></p>
+                            </div>
+                        </a>
+                        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-xl text-white shadow-lg">
+                            <i class="fas fa-chart-line text-4xl opacity-80 mb-4"></i>
+                            <h4 class="text-lg uppercase">Средний балл</h4>
+                            <p class="text-5xl font-black"><?= round($pdo->query("SELECT AVG(grade) FROM grades")->fetchColumn(), 2) ?></p>
+                        </div>
+                        <a href="?page=scholarship" class="stat-card block">
+                            <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl text-white shadow-lg">
+                                <i class="fas fa-wallet text-4xl opacity-80 mb-4"></i>
+                                <h4 class="text-lg uppercase">Стипендиатов</h4>
+                                <p class="text-5xl font-black"><?= $pdo->query("SELECT COUNT(*) FROM (SELECT s.stud_id FROM students s JOIN grades g ON s.stud_id = g.students_stud_id GROUP BY s.stud_id HAVING MIN(g.grade) >= 4) as t")->fetchColumn() ?></p>
+                            </div>
+                        </a>
+                        <a href="?page=teacher_load" class="stat-card block">
+                            <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-xl text-white shadow-lg">
+                                <i class="fas fa-chalkboard-teacher text-4xl opacity-80 mb-4"></i>
+                                <h4 class="text-lg uppercase">Преподавателей</h4>
+                                <p class="text-5xl font-black"><?= $pdo->query("SELECT COUNT(*) FROM teacher")->fetchColumn() ?></p>
+                            </div>
+                        </a>
+                    </div>
+                <?php endif; ?>
+                
                 <div class="mb-6">
                     <form method="GET" class="max-w-2xl">
                         <input type="hidden" name="page" value="students">
@@ -683,14 +995,25 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                 
                 <?php if (!isset($_GET['global_search']) && !$type && !$fac_id && !$dep_id && !$group_id): ?>
                     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <a href="?page=students&search_type=fac" class="p-8 bg-white rounded-xl shadow-sm border-t-4 border-blue-500 text-center"><i class="fas fa-university text-4xl text-blue-500 mb-4"></i><h4 class="font-bold">По факультетам</h4></a>
-                        <a href="?page=students&search_type=dep" class="p-8 bg-white rounded-xl shadow-sm border-t-4 border-emerald-500 text-center"><i class="fas fa-building text-4xl text-emerald-500 mb-4"></i><h4 class="font-bold">По кафедрам</h4></a>
-                        <a href="?page=students&search_type=group" class="p-8 bg-white rounded-xl shadow-sm border-t-4 border-purple-500 text-center"><i class="fas fa-users text-4xl text-purple-500 mb-4"></i><h4 class="font-bold">По группам</h4></a>
+                        <a href="?page=students&search_type=fac" class="p-8 bg-white rounded-xl shadow-sm border-t-4 border-blue-500 text-center">
+                            <i class="fas fa-university text-4xl text-blue-500 mb-4"></i>
+                            <h4 class="font-bold">По факультетам</h4>
+                        </a>
+                        <a href="?page=students&search_type=dep" class="p-8 bg-white rounded-xl shadow-sm border-t-4 border-emerald-500 text-center">
+                            <i class="fas fa-building text-4xl text-emerald-500 mb-4"></i>
+                            <h4 class="font-bold">По кафедрам</h4>
+                        </a>
+                        <a href="?page=students&search_type=group" class="p-8 bg-white rounded-xl shadow-sm border-t-4 border-purple-500 text-center">
+                            <i class="fas fa-users text-4xl text-purple-500 mb-4"></i>
+                            <h4 class="font-bold">По группам</h4>
+                        </a>
                     </section>
                 <?php endif; ?>
                 
                 <?php if ($query): ?>
-                    <section class="bg-white rounded-xl shadow-sm overflow-hidden"><?php renderTable($pdo, $query, $page, ($page === 'students' && isset($group_id))); ?></section>
+                    <section class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <?php renderTable($pdo, $query, $page, ($page === 'students' && isset($group_id))); ?>
+                    </section>
                 <?php elseif (!isset($_GET['global_search']) && !$type && !$fac_id && !$dep_id && !$group_id): ?>
                     <div class="bg-white rounded-xl shadow-sm p-12 text-center">
                         <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
@@ -698,7 +1021,7 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                     </div>
                 <?php endif; ?>
                 
-            <!-- Страница архива -->
+            <!-- Остальные страницы -->
             <?php elseif ($page === 'archive'): ?>
                 <?php if ($query): ?>
                     <section class="bg-white rounded-xl shadow-sm"><div class="p-4 bg-gray-50 border-b"><h3 class="text-lg font-semibold"><i class="fas fa-archive mr-2"></i> Архив выпускников</h3></div><?php renderTable($pdo, $query, $page, false); ?></section>
@@ -706,15 +1029,12 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4"><p class="text-yellow-700">Архив пуст</p></div>
                 <?php endif; ?>
                 
-            <!-- Добавление группы -->
             <?php elseif ($page === 'add_group'): ?>
                 <div class="max-w-2xl mx-auto"><div class="bg-white rounded-xl p-6"><h3 class="text-xl font-bold mb-6">Добавление группы</h3><form action="actions.php" method="POST" class="space-y-4"><input type="hidden" name="action" value="add_group"><div><label class="block text-sm font-medium mb-1">Название группы</label><input type="text" name="group_name" required class="w-full p-2 border rounded-lg"></div><div><label class="block text-sm font-medium mb-1">Курс</label><select name="course" class="w-full p-2 border rounded-lg"><option value="1">1 курс</option><option value="2">2 курс</option><option value="3">3 курс</option><option value="4">4 курс</option></select></div><div><label class="block text-sm font-medium mb-1">Кафедра</label><select name="dep_id" required class="w-full p-2 border rounded-lg"><option value="">Выберите</option><?php foreach($pdo->query("SELECT dep_id, dep_name FROM departments ORDER BY dep_name") as $dep): ?><option value="<?= $dep['dep_id'] ?>"><?= htmlspecialchars($dep['dep_name']) ?></option><?php endforeach; ?></select></div><button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg">Добавить</button></form></div></div>
                 
-            <!-- Годовой перевод -->
             <?php elseif ($page === 'annual_promotion'): ?>
                 <div class="max-w-2xl mx-auto"><div class="bg-white rounded-xl p-6"><div class="text-center mb-6"><i class="fas fa-calendar-alt text-5xl text-yellow-500 mb-3"></i><h3 class="text-xl font-bold">Годовой перевод</h3><div class="mt-4 p-3 bg-yellow-50 rounded text-sm">Внимание! Действие необратимо</div></div><form action="actions.php" method="POST" onsubmit="return confirm('Вы уверены?')"><input type="hidden" name="action" value="annual_promotion"><div class="bg-gray-50 rounded p-4 mb-4"><?php foreach($pdo->query("SELECT course, COUNT(*) as count FROM `groups` GROUP BY course") as $stat): $students = $pdo->query("SELECT COUNT(*) FROM students s JOIN `groups` g ON s.groups_group_id = g.group_id WHERE g.course = ".$stat['course'])->fetchColumn(); ?><div class="flex justify-between text-sm"><span><?= $stat['course'] ?> курс:</span><span><?= $stat['count'] ?> групп, <?= $students ?> студентов</span></div><?php endforeach; ?></div><button type="submit" class="w-full bg-yellow-600 text-white py-3 rounded-lg font-bold">Выполнить перевод</button></form></div></div>
                 
-            <!-- Панель преподавателя -->
             <?php elseif ($page === 'teacher_panel'): ?>
                 <?php if (!$teacher_id): ?>
                     <div class="max-w-md mx-auto"><form method="POST" action="actions.php" class="bg-white p-8 rounded-xl"><input type="hidden" name="action" value="teacher_login"><h3 class="text-xl font-bold mb-6">Вход для преподавателя</h3><input type="number" name="teacher_id" placeholder="ID преподавателя" required class="w-full p-2 border rounded-lg mb-4"><button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg">Войти</button></form></div>
@@ -723,7 +1043,6 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                     <div class="bg-white rounded-xl p-6"><h3 class="font-bold text-lg mb-4">Ваши дисциплины</h3><?php $subjects = $pdo->prepare("SELECT sub_id, sub_name FROM subjects WHERE teacher_teach_id = ?"); $subjects->execute([$teacher_id]); if($subjects->rowCount()): ?><ul><?php while($sub = $subjects->fetch()): ?><li class="flex justify-between p-2 bg-gray-50 rounded mb-2"><span><?= htmlspecialchars($sub['sub_name']) ?></span><a href="?page=add_grade&subject_id=<?= $sub['sub_id'] ?>" class="text-blue-500">Выставить оценки</a></li><?php endwhile; ?></ul><?php else: ?><p class="text-gray-500">Нет дисциплин</p><?php endif; ?></div>
                 <?php endif; ?>
                 
-            <!-- Выставление оценки -->
             <?php elseif ($page === 'add_grade'): ?>
                 <?php if (!$teacher_id): ?>
                     <div class="bg-yellow-50 p-4 rounded"><p>Сначала войдите в панель преподавателя</p><a href="?page=teacher_panel" class="text-blue-500">Перейти ко входу</a></div>
@@ -731,12 +1050,10 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                     <div class="max-w-2xl mx-auto"><div class="bg-white rounded-xl p-6"><h3 class="text-xl font-bold mb-6">Выставить оценку</h3><form method="POST" action="actions.php" class="space-y-4"><input type="hidden" name="action" value="add_grade"><input type="hidden" name="teacher_id" value="<?= $teacher_id ?>"><div><label>Дисциплина</label><select name="subject_id" required class="w-full p-2 border rounded-lg"><?php $subjects = $pdo->prepare("SELECT sub_id, sub_name FROM subjects WHERE teacher_teach_id = ?"); $subjects->execute([$teacher_id]); while($sub = $subjects->fetch()): ?><option value="<?= $sub['sub_id'] ?>"><?= htmlspecialchars($sub['sub_name']) ?></option><?php endwhile; ?></select></div><div><label>ID студента</label><input type="number" name="student_id" required class="w-full p-2 border rounded-lg"></div><div><label>Оценка</label><select name="grade" required class="w-full p-2 border rounded-lg"><option value="5">5 - Отлично</option><option value="4">4 - Хорошо</option><option value="3">3 - Удовлетворительно</option><option value="2">2 - Неудовлетворительно</option></select></div><button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg">Выставить</button></form></div></div>
                 <?php endif; ?>
                 
-            <!-- Зачетная книжка -->
             <?php elseif ($page === 'student_info'): ?>
                 <div class="max-w-md mx-auto mb-8"><form method="GET" class="bg-white p-6 rounded-xl"><input type="hidden" name="page" value="student_info"><label class="block text-sm font-medium mb-2">Введите ID студента</label><div class="flex gap-2"><input type="number" name="id" value="<?= $_GET['id'] ?? '' ?>" placeholder="10001" class="flex-1 p-2 border rounded-lg"><button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg">Найти</button></div></form></div>
                 <?php if ($student_info && $query): ?><div class="bg-white rounded-xl shadow-sm overflow-hidden"><div class="p-6 bg-gradient-to-r from-blue-50"><h3 class="text-xl font-bold"><?= htmlspecialchars($student_info['full_name']) ?></h3><p>Группа: <?= htmlspecialchars($student_info['group_name']) ?></p></div><?php renderTable($pdo, $query, $page); ?></div><?php elseif (isset($_GET['id']) && $_GET['id'] !== ''): ?><div class="bg-yellow-50 p-4 rounded"><p>Студент не найден</p></div><?php endif; ?>
                 
-            <!-- Страницы с обычными таблицами (dep_data, groups_data, teacher_load и др.) -->
             <?php elseif ($query): ?>
                 <section class="bg-white rounded-xl shadow-sm overflow-hidden"><?php renderTable($pdo, $query, $page, false); ?></section>
                 
@@ -762,65 +1079,6 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
             <form onsubmit="adminLogin(event)">
                 <input type="password" id="adminPassword" placeholder="Пароль" class="w-full p-2 border rounded-lg mb-4">
                 <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg">Войти</button>
-            </form>
-        </div>
-    </div>
-    
-    <div id="addStudentModal" class="modal">
-        <div class="modal-content p-6">
-            <div class="flex justify-between mb-4">
-                <h3 class="text-xl font-bold">Добавление студента</h3>
-                <button onclick="closeAddStudentModal()" class="text-gray-500">&times;</button>
-            </div>
-            <form id="addStudentForm" onsubmit="addNewStudent(event)">
-                <div class="space-y-3">
-                    <div><label class="block text-sm font-medium">ID студента</label><input type="number" name="stud_id" required class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">ФИО</label><input type="text" name="full_name" required class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Телефон</label><input type="text" name="stud_phone" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Год рождения</label><input type="number" name="birth_date" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Год поступления</label><input type="number" name="admission_year" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Пол</label><select name="gender" class="w-full p-2 border rounded"><option>Мужской</option><option>Женский</option></select></div>
-                    <div><label class="block text-sm font-medium">Адрес</label><input type="text" name="adress" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Город</label><input type="text" name="city" class="w-full p-2 border rounded" value="Уфа"></div>
-                    <div><label class="block text-sm font-medium">Группа</label>
-                        <select name="group_id" required class="w-full p-2 border rounded">
-                            <option value="">Выберите группу</option>
-                            <?php foreach($pdo->query("SELECT group_id, group_name FROM `groups` ORDER BY group_name") as $group): ?>
-                            <option value="<?= $group['group_id'] ?>"><?= htmlspecialchars($group['group_name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg mt-4">Добавить студента</button>
-            </form>
-        </div>
-    </div>
-    
-    <div id="editStudentModal" class="modal">
-        <div class="modal-content p-6">
-            <div class="flex justify-between mb-4">
-                <h3 class="text-xl font-bold">Редактирование студента</h3>
-                <button onclick="closeEditStudentModal()" class="text-gray-500">&times;</button>
-            </div>
-            <form id="editStudentForm" onsubmit="updateStudentData(event)">
-                <input type="hidden" name="stud_id" id="edit_stud_id">
-                <div class="space-y-3">
-                    <div><label class="block text-sm font-medium">ФИО</label><input type="text" name="full_name" id="edit_full_name" required class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Телефон</label><input type="text" name="stud_phone" id="edit_stud_phone" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Год рождения</label><input type="number" name="birth_date" id="edit_birth_date" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Год поступления</label><input type="number" name="admission_year" id="edit_admission_year" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Пол</label><select name="gender" id="edit_gender" class="w-full p-2 border rounded"><option>Мужской</option><option>Женский</option></select></div>
-                    <div><label class="block text-sm font-medium">Адрес</label><input type="text" name="adress" id="edit_adress" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Город</label><input type="text" name="city" id="edit_city" class="w-full p-2 border rounded"></div>
-                    <div><label class="block text-sm font-medium">Группа</label>
-                        <select name="group_id" id="edit_group_id" required class="w-full p-2 border rounded">
-                            <?php foreach($pdo->query("SELECT group_id, group_name FROM `groups` ORDER BY group_name") as $group): ?>
-                            <option value="<?= $group['group_id'] ?>"><?= htmlspecialchars($group['group_name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg mt-4">Сохранить изменения</button>
             </form>
         </div>
     </div>
@@ -991,108 +1249,218 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
             .catch(() => showNotification('❌ Ошибка сети', 'error'));
         }
         
-        // Работа со студентами
-        let studentEditMode = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            const addRecordForm = document.getElementById('addRecordForm');
+            if (addRecordForm) {
+                addRecordForm.onsubmit = addRecord;
+            }
+        });
+
+        // ========== ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ СТУДЕНТОВ ==========
+    
+        let editMode = false;
         
-        function enableStudentEditMode() {
-            studentEditMode = !studentEditMode;
-            const cells = document.querySelectorAll('#studentsTable .editable-student-cell');
+        function enableEditMode() {
+            editMode = !editMode;
+            const cells = document.querySelectorAll('#studentsTable .student-editable-cell');
+            const btn = document.getElementById('editModeBtn');
+            
             cells.forEach(cell => {
-                if (studentEditMode) {
+                if (editMode) {
                     cell.style.backgroundColor = '#fff3cd';
                     cell.style.cursor = 'pointer';
-                    cell.onclick = () => editStudentCell(cell);
+                    cell.style.position = 'relative';
+                    cell.onclick = () => makeEditable(cell);
                 } else {
                     cell.style.backgroundColor = '';
                     cell.style.cursor = '';
                     cell.onclick = null;
+                    // Восстанавливаем оригинальное значение, если было в режиме редактирования
+                    const originalValue = cell.dataset.original;
+                    if (originalValue !== undefined && cell.querySelector('input, select') === null) {
+                        if (cell.dataset.field === 'groups_group_id') {
+                            const displaySpan = cell.querySelector('.display-value');
+                            if (displaySpan) displaySpan.innerHTML = cell.dataset.display || originalValue;
+                        } else {
+                            cell.innerHTML = originalValue;
+                        }
+                    }
                 }
             });
-            const btn = document.querySelector('.edit-mode-btn');
+            
             if (btn) {
-                btn.innerHTML = studentEditMode ? '<i class="fas fa-check"></i> Режим редактирования включен' : '<i class="fas fa-edit"></i> Режим редактирования';
+                btn.innerHTML = editMode ? '<i class="fas fa-check"></i> Режим редактирования включен' : '<i class="fas fa-edit"></i> Включить режим редактирования';
+                btn.classList.toggle('bg-indigo-600');
+                btn.classList.toggle('bg-green-600');
             }
-            showNotification(studentEditMode ? 'Режим редактирования включен. Кликайте по ячейкам для изменения.' : 'Режим редактирования выключен', 'warning');
+            
+            showNotification(editMode ? 'Режим редактирования включен. Кликайте по ячейкам для изменения.' : 'Режим редактирования выключен', 'warning');
         }
         
-        function editStudentCell(cell) {
-            if (!studentEditMode) return;
+        function makeEditable(cell) {
+            if (!editMode) return;
             if (cell.querySelector('input') || cell.querySelector('select')) return;
             
             const row = cell.closest('tr');
             const studentId = row.dataset.studentId;
             const field = cell.dataset.field;
-            const currentValue = cell.innerText;
+            const currentValue = cell.dataset.original;
+            const currentDisplay = cell.dataset.display;
             
-            let input;
-            if (field === 'group_name') {
-                input = document.createElement('select');
-                <?php
-                $groups = $pdo->query("SELECT group_id, group_name FROM `groups` ORDER BY group_name");
-                $groupsHtml = '';
-                foreach($groups as $g) {
-                    $groupsHtml .= '<option value="' . $g['group_id'] . '">' . addslashes($g['group_name']) . '</option>';
-                }
-                ?>
-                input.innerHTML = '<?= $groupsHtml ?>';
-                const currentGroupId = row.dataset.groupId;
-                if (currentGroupId) input.value = currentGroupId;
+            if (field === 'groups_group_id') {
+                // Создаем select для выбора группы
+                const select = document.createElement('select');
+                select.className = 'w-full p-1 border-2 border-blue-500 rounded bg-white';
+                <?php 
+                $groups = $pdo->query("SELECT group_id, group_name, course FROM `groups` ORDER BY course, group_name");
+                foreach($groups as $g): ?>
+                select.innerHTML += '<option value="<?= $g['group_id'] ?>" data-name="<?= htmlspecialchars($g['group_name']) ?>"><?= htmlspecialchars($g['group_name']) ?> (<?= $g['course'] ?> курс)</option>';
+                <?php endforeach; ?>
+                select.value = currentValue;
+                
+                const originalHtml = cell.innerHTML;
+                
+                cell.innerHTML = '';
+                cell.appendChild(select);
+                cell.classList.add('editing');
+                select.focus();
+                
+                const save = () => {
+                    const newGroupId = select.value;
+                    const selectedOption = select.options[select.selectedIndex];
+                    const newGroupName = selectedOption.getAttribute('data-name') || selectedOption.text.split(' (')[0];
+                    
+                    if (newGroupId == currentValue) {
+                        cell.innerHTML = originalHtml;
+                        cell.classList.remove('editing');
+                        return;
+                    }
+                    
+                    cell.innerHTML = '<span class="text-gray-400">⏳ сохранение...</span>';
+                    
+                    fetch("?admin_action=update_student", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({ stud_id: studentId, groups_group_id: newGroupId })
+                    })
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.success) {
+                            cell.innerHTML = `<span class="display-value">${newGroupName}</span>`;
+                            cell.dataset.original = newGroupId;
+                            cell.dataset.display = newGroupName;
+                            row.dataset.groupId = newGroupId;
+                            updateStudentRowInfo(row, studentId);
+                            showNotification('✅ Группа обновлена!');
+                        } else {
+                            cell.innerHTML = originalHtml;
+                            showNotification('❌ ' + (result.error || 'Ошибка'), 'error');
+                        }
+                        cell.classList.remove('editing');
+                    })
+                    .catch((err) => {
+                        console.error('Error:', err);
+                        cell.innerHTML = originalHtml;
+                        cell.classList.remove('editing');
+                        showNotification('❌ Ошибка сети: ' + err.message, 'error');
+                    });
+                };
+                
+                select.onblur = save;
+                select.onkeypress = (e) => { if(e.key === 'Enter') save(); };
             } else {
-                input = document.createElement('input');
-                input.type = (field === 'birth_date' || field === 'admission_year') ? 'number' : 'text';
+                // Для обычных текстовых полей
+                const input = document.createElement('input');
+                let inputType = 'text';
+                if (field === 'birth_date' || field === 'admission_year') {
+                    inputType = 'number';
+                }
+                input.type = inputType;
                 input.value = currentValue;
-            }
-            
-            input.className = 'w-full p-1 border-2 border-blue-500 rounded';
-            cell.innerHTML = '';
-            cell.appendChild(input);
-            input.focus();
-            
-            const save = () => {
-                let newValue = input.value;
-                let groupId = null;
-                if (field === 'group_name') {
-                    groupId = input.value;
-                    newValue = input.options[input.selectedIndex]?.text || newValue;
-                }
+                input.className = 'w-full p-1 border-2 border-blue-500 rounded';
                 
-                if (newValue === currentValue && !groupId) {
-                    cell.innerHTML = currentValue;
-                    return;
-                }
+                const originalHtml = cell.innerHTML;
+                cell.innerHTML = '';
+                cell.appendChild(input);
+                cell.classList.add('editing');
+                input.focus();
                 
-                cell.innerHTML = '<span class="text-gray-400">⏳ сохранение...</span>';
-                const data = { stud_id: studentId };
-                if (field === 'group_name') {
-                    data.groups_group_id = groupId;
-                } else {
+                const save = () => {
+                    const newValue = input.value;
+                    
+                    if (newValue == currentValue) {
+                        cell.innerHTML = originalHtml;
+                        cell.classList.remove('editing');
+                        return;
+                    }
+                    
+                    cell.innerHTML = '<span class="text-gray-400">⏳ сохранение...</span>';
+                    
+                    const data = { stud_id: studentId, field: field };
                     data[field] = newValue;
-                }
+                    
+                    fetch("?admin_action=update_student", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(data)
+                    })
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.success) {
+                            cell.innerHTML = newValue;
+                            cell.dataset.original = newValue;
+                            showNotification('✅ Данные обновлены!');
+                        } else {
+                            cell.innerHTML = originalHtml;
+                            showNotification('❌ ' + (result.error || 'Ошибка'), 'error');
+                        }
+                        cell.classList.remove('editing');
+                    })
+                    .catch((err) => {
+                        console.error('Error:', err);
+                        cell.innerHTML = originalHtml;
+                        cell.classList.remove('editing');
+                        showNotification('❌ Ошибка сети: ' + err.message, 'error');
+                    });
+                };
                 
-                fetch("?admin_action=update_student", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(data)
+                input.onblur = save;
+                input.onkeypress = (e) => { if(e.key === 'Enter') save(); };
+            }
+        }
+        
+        function updateStudentRowInfo(row, studentId) {
+            fetch(`?admin_action=get_student&id=${studentId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data && !data.error) {
+                        const courseCell = row.cells[6];
+                        if (courseCell && data.course) {
+                            courseCell.innerHTML = data.course;
+                        }
+                        const depCell = row.cells[7];
+                        if (depCell && data.dep_name) {
+                            depCell.innerHTML = data.dep_name;
+                        }
+                    }
                 })
+                .catch(err => console.error('Error updating row info:', err));
+        }
+        
+        function deleteStudent(id) {
+            if (!confirm(`Удалить студента #${id}?\n\n⚠️ Все его оценки и пересдачи также будут удалены! Это действие необратимо!`)) return;
+            
+            fetch(`?admin_action=delete_student&id=${id}`)
                 .then(r => r.json())
                 .then(result => {
                     if (result.success) {
-                        cell.innerHTML = newValue;
-                        if (field === 'group_name') row.dataset.groupId = groupId;
-                        showNotification('✅ Данные обновлены');
+                        showNotification('✅ Студент удален');
+                        setTimeout(() => location.reload(), 1000);
                     } else {
-                        cell.innerHTML = currentValue;
-                        showNotification('❌ ' + (result.error || 'Ошибка'), 'error');
+                        showNotification('❌ ' + (result.error || 'Ошибка при удалении'), 'error');
                     }
                 })
-                .catch(() => {
-                    cell.innerHTML = currentValue;
-                    showNotification('❌ Ошибка сети', 'error');
-                });
-            };
-            
-            input.addEventListener('blur', save);
-            input.addEventListener('keypress', (e) => { if(e.key === 'Enter') save(); });
+                .catch(() => showNotification('❌ Ошибка сети', 'error'));
         }
         
         function showAddStudentModal() {
@@ -1123,82 +1491,11 @@ function renderAdminTable($pdo, $table, $displayName, $idColumn, $orderBy = '') 
                     closeAddStudentModal();
                     setTimeout(() => location.reload(), 1000);
                 } else {
-                    showNotification('❌ ' + (result.error || 'Ошибка'), 'error');
+                    showNotification('❌ ' + (result.error || 'Ошибка при добавлении'), 'error');
                 }
             })
             .catch(() => showNotification('❌ Ошибка сети', 'error'));
         }
-        
-        function editStudent(id) {
-            fetch(`?admin_action=get_student&id=${id}`)
-            .then(r => r.json())
-            .then(data => {
-                if (data.error) {
-                    showNotification(data.error, 'error');
-                    return;
-                }
-                document.getElementById('edit_stud_id').value = data.stud_id;
-                document.getElementById('edit_full_name').value = data.full_name || '';
-                document.getElementById('edit_stud_phone').value = data.stud_phone || '';
-                document.getElementById('edit_birth_date').value = data.birth_date || '';
-                document.getElementById('edit_admission_year').value = data.admission_year || '';
-                document.getElementById('edit_gender').value = data.gender || 'Мужской';
-                document.getElementById('edit_adress').value = data.adress || '';
-                document.getElementById('edit_city').value = data.city || '';
-                document.getElementById('edit_group_id').value = data.groups_group_id || '';
-                document.getElementById('editStudentModal').classList.add('active');
-            });
-        }
-        
-        function closeEditStudentModal() {
-            document.getElementById('editStudentModal').classList.remove('active');
-        }
-        
-        function updateStudentData(e) {
-            e.preventDefault();
-            const form = e.target;
-            const formData = new FormData(form);
-            const data = {};
-            formData.forEach((value, key) => { data[key] = value; });
-            
-            fetch("?admin_action=update_student", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(data)
-            })
-            .then(r => r.json())
-            .then(result => {
-                if (result.success) {
-                    showNotification('✅ Данные обновлены');
-                    closeEditStudentModal();
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    showNotification('❌ ' + (result.error || 'Ошибка'), 'error');
-                }
-            })
-            .catch(() => showNotification('❌ Ошибка сети', 'error'));
-        }
-        
-        function deleteStudentRecord(id) {
-            if (!confirm(`Удалить студента #${id}?\n\n⚠️ Все его оценки и пересдачи также будут удалены!`)) return;
-            fetch(`?admin_action=delete_student&id=${id}`)
-            .then(r => r.json())
-            .then(result => {
-                if (result.success) {
-                    showNotification('✅ Студент удален');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    showNotification('❌ ' + (result.error || 'Ошибка'), 'error');
-                }
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const addRecordForm = document.getElementById('addRecordForm');
-            if (addRecordForm) {
-                addRecordForm.onsubmit = addRecord;
-            }
-        });
     </script>
 </body>
 </html>

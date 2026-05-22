@@ -5,7 +5,7 @@ require_once 'login.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
-    // Добавление нового студента
+    // Добавление нового студента (триггер сам добавит год поступления)
     if ($action === 'add_student') {
         $stud_id = intval($_POST['stud_id']);
         $full_name = $_POST['full_name'];
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Выставление оценки
+    // Выставление оценки (триггеры проверят диапазон и добавят в пересдачи при 2)
     elseif ($action === 'add_grade') {
         $subject_id = intval($_POST['subject_id']);
         $student_id = intval($_POST['student_id']);
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$grade, $subject_id, $student_id]);
                 $message = "Оценка обновлена с {$existing['grade']} на $grade";
             } else {
-                // Оценки нет - вставляем новую
+                // Оценки нет - вставляем новую (триггеры сработают автоматически)
                 $stmt = $pdo->prepare("INSERT INTO grades (subjects_sub_id, students_stud_id, grade) VALUES (?, ?, ?)");
                 $stmt->execute([$subject_id, $student_id, $grade]);
                 $message = "Оценка $grade успешно выставлена";
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Удаление через хранимую процедуру
+    // Удаление через хранимую процедуру в БД
     elseif ($action === 'delete_student_proc') {
         $stud_id = intval($_POST['stud_id']);
         
@@ -142,7 +142,7 @@ if (isset($_GET['success']) || isset($_GET['error'])) {
         echo "alert('✅ " . addslashes($msg) . "');";
     }
     if (isset($_GET['error'])) {
-        echo "alert('Ошибка: " . addslashes($_GET['error']) . "');";
+        echo "alert('❌ Ошибка: " . addslashes($_GET['error']) . "');";
     }
     echo "window.location.href = 'index.php?page=$page';";
     echo "</script>";

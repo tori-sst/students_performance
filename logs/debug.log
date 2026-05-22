@@ -314,3 +314,73 @@
 [2026-05-21 11:24:34] === deleteRecord CALLED ===
 [2026-05-21 11:24:34] Table: faculties, ID: 5, ID Column: fac_id
 [2026-05-21 11:24:34] SUCCESS: Record deleted
+[2026-05-22 05:20:30] === updateStudent CALLED ===
+[2026-05-22 05:20:30] ID: 10012, Data: Array
+(
+    [stud_id] => 10012
+    [admission_year] => 2021
+)
+
+[2026-05-22 05:20:30] EXCEPTION: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`student_performance`.`students`, CONSTRAINT `fk_students_groups1` FOREIGN KEY (`groups_group_id`) REFERENCES `groups` (`group_id`))
+[2026-05-22 05:20:39] === updateStudent CALLED ===
+[2026-05-22 05:20:39] ID: 10012, Data: Array
+(
+    [stud_id] => 10012
+    [groups_group_id] => 5
+)
+
+[2026-05-22 05:20:44] === updateStudent CALLED ===
+[2026-05-22 05:20:44] ID: 10012, Data: Array
+(
+    [stud_id] => 10012
+    [birth_date] => 2003
+)
+
+[2026-05-22 05:20:44] EXCEPTION: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`student_performance`.`students`, CONSTRAINT `fk_students_groups1` FOREIGN KEY (`groups_group_id`) REFERENCES `groups` (`group_id`))
+[2026-05-22 05:28:21] === updateStudent CALLED ===
+[2026-05-22 05:28:21] ID: 10012, Data: Array
+(
+    [stud_id] => 10012
+    [field] => birth_date
+    [birth_date] => 2003
+)
+
+[2026-05-22 05:28:41] === updateAnyTableCell CALLED ===
+[2026-05-22 05:28:41] Table: faculties
+[2026-05-22 05:28:41] ID: 3
+[2026-05-22 05:28:41] Column: dean_name
+[2026-05-22 05:28:41] Value: Плотникова Елена Викторовн
+[2026-05-22 05:28:41] Primary key: fac_id
+[2026-05-22 05:28:41] SQL: UPDATE `faculties` SET `dean_name` = ? WHERE `fac_id` = ?
+[2026-05-22 05:28:41] SUCCESS! Rows affected: 1
+[2026-05-22 05:28:45] === updateAnyTableCell CALLED ===
+[2026-05-22 05:28:45] Table: faculties
+[2026-05-22 05:28:45] ID: 3
+[2026-05-22 05:28:45] Column: dean_name
+[2026-05-22 05:28:45] Value: Плотникова Елена Викторовна
+[2026-05-22 05:28:45] Primary key: fac_id
+[2026-05-22 05:28:45] SQL: UPDATE `faculties` SET `dean_name` = ? WHERE `fac_id` = ?
+[2026-05-22 05:28:45] SUCCESS! Rows affected: 1
+[2026-05-22 05:30:36] === deleteStudentCascade CALLED ===
+[2026-05-22 05:30:36] Student ID: 10012
+[2026-05-22 05:30:36] Deleted 0 records from reexams
+[2026-05-22 05:30:36] Deleted 3 records from grades
+[2026-05-22 05:30:36] Deleted 1 student record
+[2026-05-22 05:30:36] SUCCESS: Student 10012 completely deleted with all related data
+[2026-05-22 05:30:44] === updateStudent CALLED ===
+[2026-05-22 05:30:44] ID: 10036, Data: Array
+(
+    [stud_id] => 10036
+    [field] => birth_date
+    [birth_date] => 2007
+)
+
+[2026-05-22 05:30:50] === updateStudent CALLED ===
+[2026-05-22 05:30:50] ID: 10036, Data: Array
+(
+    [stud_id] => 10036
+    [groups_group_id] => 28
+)
+
+[2026-05-22 05:31:40] === deleteRecord CALLED ===
+[2026-05-22 05:31:40] Table: faculties, ID: 1, ID Column: fac_id
